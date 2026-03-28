@@ -1,5 +1,11 @@
 # edit-distance
-Levenshtein edit distance with alignment. Zero dependencies.
+
+Levenshtein and other string distances.""".
+
+Zero dependencies. Python 3.8+.
+
+## Usage
+
 ```bash
-python3 edit_distance.py --demo
+python3 edit_distance.py --help
 ```
