@@ -1,53 +1,30 @@
 #!/usr/bin/env python3
-"""Edit Distance — Levenshtein, Damerau-Levenshtein, alignment."""
+"""Edit distance (Levenshtein) with alignment."""
 import sys
-
-def levenshtein(s, t):
-    m, n = len(s), len(t)
-    dp = list(range(n + 1))
-    for i in range(1, m + 1):
-        prev, dp[0] = dp[0], i
-        for j in range(1, n + 1):
-            temp = dp[j]
-            dp[j] = min(dp[j] + 1, dp[j-1] + 1, prev + (0 if s[i-1] == t[j-1] else 1))
-            prev = temp
-    return dp[n]
-
-def damerau_levenshtein(s, t):
-    m, n = len(s), len(t)
-    d = [[0]*(n+1) for _ in range(m+1)]
-    for i in range(m+1): d[i][0] = i
-    for j in range(n+1): d[0][j] = j
-    for i in range(1, m+1):
-        for j in range(1, n+1):
-            cost = 0 if s[i-1] == t[j-1] else 1
-            d[i][j] = min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+cost)
-            if i > 1 and j > 1 and s[i-1] == t[j-2] and s[i-2] == t[j-1]:
-                d[i][j] = min(d[i][j], d[i-2][j-2]+cost)
-    return d[m][n]
-
-def alignment(s, t):
-    m, n = len(s), len(t)
-    dp = [[0]*(n+1) for _ in range(m+1)]
-    for i in range(m+1): dp[i][0] = i
-    for j in range(n+1): dp[0][j] = j
-    for i in range(1, m+1):
-        for j in range(1, n+1):
-            dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+(0 if s[i-1]==t[j-1] else 1))
-    # Traceback
-    a1, a2 = [], []; i, j = m, n
-    while i > 0 or j > 0:
-        if i > 0 and j > 0 and dp[i][j] == dp[i-1][j-1] + (0 if s[i-1]==t[j-1] else 1):
-            a1.append(s[i-1]); a2.append(t[j-1]); i -= 1; j -= 1
-        elif i > 0 and dp[i][j] == dp[i-1][j] + 1:
-            a1.append(s[i-1]); a2.append('-'); i -= 1
-        else:
-            a1.append('-'); a2.append(t[j-1]); j -= 1
-    return ''.join(reversed(a1)), ''.join(reversed(a2))
-
-if __name__ == "__main__":
-    pairs = [("kitten","sitting"), ("saturday","sunday"), ("abc","ca")]
-    for s, t in pairs:
-        print(f"  {s} → {t}: lev={levenshtein(s,t)}, damerau={damerau_levenshtein(s,t)}")
-    a1, a2 = alignment("INTENTION", "EXECUTION")
-    print(f"\nAlignment:\n  {a1}\n  {a2}")
+def edit_distance(a,b):
+    m,n=len(a),len(b)
+    dp=[[0]*(n+1) for _ in range(m+1)]
+    for i in range(m+1): dp[i][0]=i
+    for j in range(n+1): dp[0][j]=j
+    for i in range(1,m+1):
+        for j in range(1,n+1):
+            if a[i-1]==b[j-1]: dp[i][j]=dp[i-1][j-1]
+            else: dp[i][j]=1+min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])
+    # Backtrace
+    ops=[];i,j=m,n
+    while i>0 or j>0:
+        if i>0 and j>0 and a[i-1]==b[j-1]: ops.append(('match',a[i-1]));i-=1;j-=1
+        elif i>0 and j>0 and dp[i][j]==dp[i-1][j-1]+1: ops.append(('replace',a[i-1],b[j-1]));i-=1;j-=1
+        elif i>0 and dp[i][j]==dp[i-1][j]+1: ops.append(('delete',a[i-1]));i-=1
+        else: ops.append(('insert',b[j-1]));j-=1
+    return dp[m][n],list(reversed(ops))
+def main():
+    if "--demo" in sys.argv:
+        pairs=[("kitten","sitting"),("saturday","sunday"),("algorithm","altruistic")]
+        for a,b in pairs:
+            d,ops=edit_distance(a,b)
+            edits=[o for o in ops if o[0]!='match']
+            print(f"'{a}' → '{b}': distance={d}, ops={edits}")
+    elif len(sys.argv)>2:
+        d,_=edit_distance(sys.argv[1],sys.argv[2]);print(d)
+if __name__=="__main__": main()
