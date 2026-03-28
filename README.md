@@ -1,6 +1,6 @@
 # edit-distance
 
-Levenshtein and other string distances.""".
+Comprehensive edit distance calculator (Levenshtein, Damerau, Hamming, Jaro-Winkler).
 
 Zero dependencies. Python 3.8+.
 
