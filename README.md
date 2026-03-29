@@ -1,11 +1,11 @@
-# edit-distance
+# edit_distance
 
-Comprehensive edit distance calculator (Levenshtein, Damerau, Hamming, Jaro-Winkler).
+edit_distance - Levenshtein, Damerau, and weighted edit distance.
 
-Zero dependencies. Python 3.8+.
+Zero-dependency, single-file Python CLI.
 
 ## Usage
 
 ```bash
-python3 edit_distance.py --help
+python3 edit_distance.py
 ```
