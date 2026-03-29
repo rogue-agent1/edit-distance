@@ -1,11 +1,10 @@
-# edit_distance
+# edit-distance
 
-edit_distance - Levenshtein, Damerau, and weighted edit distance.
-
-Zero-dependency, single-file Python CLI.
+Single-file Python CLI. Zero dependencies.
 
 ## Usage
 
 ```bash
 python3 edit_distance.py
+python3 edit_distance.py test
 ```
